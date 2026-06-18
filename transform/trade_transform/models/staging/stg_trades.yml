@@ -1,0 +1,28 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: main
+    tables:
+      - name: raw_trades
+
+models:
+  - name: stg_trades
+    columns:
+    
+      - name: trade_direction
+        tests:
+          - accepted_values:
+              values: ['X', 'M']
+      
+      - name: reporting_country
+        tests: 
+          - not_null
+
+      - name: partner_country
+        tests: 
+          - not_null
+
+      - name: commodity_code
+        tests:
+          - not_null

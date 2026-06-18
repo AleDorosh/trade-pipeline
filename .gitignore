@@ -1,0 +1,20 @@
+venv/
+data/
+scratch/
+
+# Python
+__pycache__/
+*.pyc
+
+# Dagster
+.tmp_dagster_home*/
+
+# VS Code
+.vscode/
+
+# Claude
+.claude/
+
+# DBT
+target/
+logs/
