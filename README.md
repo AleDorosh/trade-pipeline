@@ -124,6 +124,12 @@ trade-pipeline/
 
 ---
 
+## Author
+
+Aleksandra Doroshenko 
+
+---
+
 ## Acknowledgement
 
 AI tools were used during development to introduce dbt and Dagster, explain concepts, and guide debugging - including a dependency mismatch between dbt's source naming and Dagster's asset keys. All pipeline design, code, and configuration were written and validated by the author.
