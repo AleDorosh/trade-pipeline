@@ -34,7 +34,7 @@ jobs:
           EOF
       - name: Parse dbt project
         run: dbt parse
-        working-derectory: transform/trade_transform
+        working-directory: transform/trade_transform
 
       - name: Materialize assets
         run: dagster asset materialize --select "*" -f definitions.py 
