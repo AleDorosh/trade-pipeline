@@ -1,0 +1,42 @@
+name: Comtrade pipe-line
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Create profile
+        run: | 
+          mkdir -p ~/.dbt 
+          cat > ~/.dbt/profiles.yml << 'EOF' 
+          trade_transform: 
+            outputs: 
+              dev: 
+                type: duckdb 
+                path: ../../data/db/trades.duckdb 
+                threads: 1 
+            target: dev 
+          EOF
+
+      - name: Materialize assets
+        run: dagster asset materialize --select "*" -f definitions.py 
+        working-directory: orchestrate
+
+      - name: Build dbt
+        run: dbt build
+        working-directory: transform/trade_transform
