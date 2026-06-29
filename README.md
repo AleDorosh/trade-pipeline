@@ -68,6 +68,13 @@ All four stages run as a single connected Dagster asset graph:
 
 ---
 
+## Continuous Integration
+
+This repo uses **GitHub Actions** to automatically verify the pipeline on every push to `main`. Each run starts from a completely clean machine — no cached state, no leftover files — and reproduces the full cold-start sequence: install dependencies, generate a dbt profile, parse the dbt project, materialize the Dagster assets (building the raw trade data), then run `dbt build`, which builds both models and runs all 4 data quality tests.
+A green badge means the most recent push passed this full sequence on a fresh environment.
+
+---
+
 ## Design decisions
 
 | Decision | Reasoning |
@@ -94,7 +101,7 @@ All four stages run as a single connected Dagster asset graph:
 
 ## Stack
 
-Python · DuckDB · dbt-core (dbt-duckdb adapter) · Dagster · pandas
+Python · DuckDB · dbt-core (dbt-duckdb adapter) · Dagster · pandas · GitHub Actions
 
 DuckDB stands in for a cloud data warehouse - same SQL-based analytical model, no infrastructure cost. dbt and Dagster are used as themselves, not substitutes, since both run fully locally at no cost.
 
