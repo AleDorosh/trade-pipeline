@@ -32,6 +32,9 @@ jobs:
                 threads: 1 
             target: dev 
           EOF
+      - name: Parse dbt project
+        run: dbt parse
+        working-derectory: transform/trade_transform
 
       - name: Materialize assets
         run: dagster asset materialize --select "*" -f definitions.py 
