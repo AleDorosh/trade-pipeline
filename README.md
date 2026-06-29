@@ -1,5 +1,7 @@
 # Trade Pipeline
 
+[![CI](https://github.com/AleDorosh/trade-pipeline/actions/workflows/test.yml/badge.svg)](https://github.com/AleDorosh/trade-pipeline/actions/workflows/test.yml)
+
 Does Estonia's export data, pulled straight from a public trade API, hold up to a proper ELT treatment - extraction, loading, transformation, testing, and orchestration - using the same tool categories a production data team would reach for?
 
 ---
