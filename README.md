@@ -77,7 +77,21 @@ A green badge means the most recent push passed this full sequence on a fresh en
 
 ## Snowflake Integration (Cloud Warehouse Variant)
 
-This project runs identically against two backends: **DuckDB** (the default, local, file-based target) and **Snowflake** (a real cloud data warehouse, added to demonstrate hands-on cloud experience). Both are driven by the same dbt project — no duplicated models, no forked codebase. Credentials for Snowflake are never committed — they're read from environment variables (`SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PASSWORD`, `SNOWFLAKE_ROLE`) via dbt's `env_var()`.
+This project runs identically against two backends: **DuckDB** (the default, local, file-based target) and **Snowflake** (a real cloud data warehouse, added to demonstrate hands-on cloud experience). Both are driven by the same dbt project - no duplicated models, no forked codebase. Credentials for Snowflake are never committed, they're read from environment variables (`SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PASSWORD`, `SNOWFLAKE_ROLE`) via dbt's `env_var()`.
+
+### What's identical
+
+- Core model SQL (`stg_trades.sql`, mart model) is the same for both targets.
+- All 4 data quality tests run against both targets.
+- Dagster orchestration and CI are unaffected by backend choice.
+
+### What's different
+
+Raw data is loaded differently per backend:
+- DuckDB: flat, typed columns.
+- Snowflake: a single `VARIANT` column holding the raw JSON object per record.
+
+A model, `raw_trades_flattened.sql`, bridges this: for Snowflake it extracts and casts fields out of the JSON; for DuckDB it's a passthrough. `stg_trades.sql` itself is identical for both targets.
 
 ### Running against each target
 
