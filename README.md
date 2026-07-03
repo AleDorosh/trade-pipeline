@@ -75,6 +75,18 @@ A green badge means the most recent push passed this full sequence on a fresh en
 
 ---
 
+## Snowflake Integration (Cloud Warehouse Variant)
+
+This project runs identically against two backends: **DuckDB** (the default, local, file-based target) and **Snowflake** (a real cloud data warehouse, added to demonstrate hands-on cloud experience). Both are driven by the same dbt project — no duplicated models, no forked codebase. Credentials for Snowflake are never committed — they're read from environment variables (`SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PASSWORD`, `SNOWFLAKE_ROLE`) via dbt's `env_var()`.
+
+### Running against each target
+
+```bash
+dbt build --target dev            # DuckDB (default)
+dbt build --target snowflake_dev  # Snowflake
+```
+---
+
 ## Design decisions
 
 | Decision | Reasoning |
