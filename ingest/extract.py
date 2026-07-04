@@ -12,6 +12,8 @@ import json
 from pathlib import Path
 import datetime
 import sys
+import boto3
+from botocore.exceptions import BotoCoreError, ClientError
 
 COUNTRY = '233' #Estonia
 YEAR = '2025'
@@ -62,6 +64,14 @@ def fetch_and_save_trade_data():
             with file_path.open('w') as json_file:
                 json.dump(new_data, json_file, indent=4)
                 print(f'Data written to {file_path}.')
+
+            try:
+                s3_client = boto3.client('s3')
+                s3_client.upload_file(str(file_path), 'trade-pipeline-aledorosh-raw', f'raw/{file_name}')
+                print(f'Uploaded {file_name} to S3.')
+
+            except (BotoCoreError, ClientError) as s3_err:
+                print(f'S3 upload failed: {s3_err}')
 
         except json.JSONDecodeError:
             print('Invalid JSON response!')

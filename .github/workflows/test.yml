@@ -30,8 +30,19 @@ jobs:
                 type: duckdb 
                 path: ../../data/db/trades.duckdb 
                 threads: 1 
+              snowflake:dev:
+                type: snowflake
+                account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+                user: "{{ env_var('SNOWFLAKE_USER') }}"
+                password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+                role: "{{ env_var('SNOWFLAKE_ROLE') }}"
+                database: TRADE_PIPELINE
+                warehouse: COMPUTE_WH
+                schema: PUBLIC
+                threads: 4
             target: dev 
           EOF
+          
       - name: Parse dbt project
         run: dbt parse
         working-directory: transform/trade_transform
@@ -39,7 +50,20 @@ jobs:
       - name: Materialize assets
         run: dagster asset materialize --select "*" -f definitions.py 
         working-directory: orchestrate
+        env:       
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Build dbt
         run: dbt build
         working-directory: transform/trade_transform
+
+      - name: Build dbt (Snowflake)
+        run: dbt build --target snowflake_dev
+        working-directory: transform/trade_transform
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}

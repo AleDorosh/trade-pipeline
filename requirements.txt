@@ -7,3 +7,4 @@ dbt-snowflake==1.11.6
 duckdb==1.5.3
 pandas==3.0.3
 requests==2.34.2
+boto3==1.43.39
