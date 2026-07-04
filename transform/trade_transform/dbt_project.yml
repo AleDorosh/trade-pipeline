@@ -22,6 +22,12 @@ clean-targets:         # directories to be removed by `dbt clean`
   - "target"
   - "dbt_packages"
 
+on-run-start:
+  - "{% if target.name == 'snowflake_dev' %}TRUNCATE TABLE raw_trades{% else %}SELECT 1{% endif %}"
+  - "{% if target.name == 'snowflake_dev' %}TRUNCATE TABLE raw_trades_staging_v2{% else %}SELECT 1{% endif %}"
+  - "{% if target.name == 'snowflake_dev' %}COPY INTO raw_trades_staging_v2 FROM @trade_pipeline_s3_stage FILE_FORMAT = (TYPE = JSON) PATTERN = '.*\\.json'{% else %}SELECT 1{% endif %}"
+  - "{% if target.name == 'snowflake_dev' %}INSERT INTO raw_trades (raw_data) SELECT value FROM raw_trades_staging_v2, LATERAL FLATTEN(input => raw_data:data){% else %}SELECT 1{% endif %}"
+
 
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
