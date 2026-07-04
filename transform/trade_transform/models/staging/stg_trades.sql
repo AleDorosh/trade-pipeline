@@ -6,4 +6,4 @@ SELECT
     cmdCode AS commodity_code,
     primaryValue AS trade_value_USD,
     netWgt AS goods_weight
-FROM {{ source('raw', 'raw_trades') }}
+FROM {{ ref('raw_trades_flattened') }}

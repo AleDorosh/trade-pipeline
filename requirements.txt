@@ -3,6 +3,7 @@ dagster-dbt==0.29.9
 dagster-webserver==1.13.9
 dbt-core==1.11.11
 dbt-duckdb==1.10.1
+dbt-snowflake==1.11.6
 duckdb==1.5.3
 pandas==3.0.3
 requests==2.34.2

@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: raw
-    schema: main
+    schema: "{{ 'main' if target.name == 'dev' else 'PUBLIC' }}"
     tables:
       - name: raw_trades
 
