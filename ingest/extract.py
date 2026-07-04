@@ -46,27 +46,22 @@ def fetch_and_save_trade_data():
 
     elif status_code == 200:
         try:
-            if 'application/json' in response.headers.get('Content-Type', ''):
-                new_data = response.json()
-                # Rename existing file rather than overwrite — preserves previous snapshot
-                if file_path.exists():
-                    old_path = file_path.parent / (file_path.stem + '_old' + file_path.suffix)
-                    if old_path.exists():
-                        counter = 1
-                        while old_path.exists():
-                            old_path = file_path.parent / (file_path.stem + f'_old{counter}' + file_path.suffix)
-                            counter += 1
-                    print(f'File already exists, renaming to {old_path.name}')
-                    file_path.rename(old_path)
-                with file_path.open('w') as json_file:
-                    json.dump(new_data, json_file, indent=4)
-                    print(f'Data written to {file_path}.')
-            else:
-                print('Response is not JSON!')
-                print(f"Content-Type: {response.headers.get('Content-Type')}")
-                print(f"Status: {response.status_code}")
-                print(f"Body (first 300 chars): {response.text[:300]}")
-                sys.exit('Closing script')
+            
+            new_data = response.json()
+            # Rename existing file rather than overwrite — preserves previous snapshot
+            if file_path.exists():
+                old_path = file_path.parent / (file_path.stem + '_old' + file_path.suffix)
+                if old_path.exists():
+                    counter = 1
+                    while old_path.exists():
+                        old_path = file_path.parent / (file_path.stem + f'_old{counter}' + file_path.suffix)
+                        counter += 1
+                print(f'File already exists, renaming to {old_path.name}')
+                file_path.rename(old_path)
+
+            with file_path.open('w') as json_file:
+                json.dump(new_data, json_file, indent=4)
+                print(f'Data written to {file_path}.')
 
         except json.JSONDecodeError:
             print('Invalid JSON response!')
