@@ -30,7 +30,7 @@ jobs:
                 type: duckdb 
                 path: ../../data/db/trades.duckdb 
                 threads: 1 
-              snowflake:dev:
+              snowflake_dev:
                 type: snowflake
                 account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
                 user: "{{ env_var('SNOWFLAKE_USER') }}"
@@ -42,7 +42,7 @@ jobs:
                 threads: 4
             target: dev 
           EOF
-          
+
       - name: Parse dbt project
         run: dbt parse
         working-directory: transform/trade_transform
