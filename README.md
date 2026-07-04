@@ -101,6 +101,30 @@ dbt build --target snowflake_dev  # Snowflake
 ```
 ---
 
+## Cloud Storage & Data Loading (AWS S3 → Snowflake)
+
+Raw trade data is uploaded to an S3 bucket after each extraction, in addition to the local save. Snowflake loads from S3 automatically via an external stage, no manual upload step.
+
+### What's involved
+
+- `extract.py` uploads the raw JSON to S3 (`trade-pipeline-aledorosh-raw/raw/`) via `boto3`, alongside the existing local save. IAM user scoped to this bucket only (`PutObject`, `GetObject`, `ListBucket`).
+- A Snowflake storage integration and external stage (`trade_pipeline_s3_stage`) read directly from that bucket, authenticated via an IAM role (no AWS keys stored in Snowflake).
+- Loading `raw_trades` from the stage: truncate, `COPY INTO` a staging table, `FLATTEN`, insert. Runs automatically via a dbt `on-run-start` hook every time `dbt build --target snowflake_dev` runs. Each run refreshes the full snapshot rather than appending (the source data represents current-state figures for a fixed country/year, not incrementally new records).
+
+### Running it
+
+```bash
+dbt build --target snowflake_dev
+```
+
+This alone triggers the full refresh: S3 → external stage → `raw_trades` → staging/mart models → tests.
+
+### CI
+
+GitHub Actions builds both `dev` (DuckDB) and `snowflake_dev` (Snowflake) on every push. Both require their own set of GitHub Secrets: `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_DEFAULT_REGION` for the S3 upload step, and `SNOWFLAKE_ACCOUNT` / `SNOWFLAKE_USER` / `SNOWFLAKE_PASSWORD` / `SNOWFLAKE_ROLE` for the Snowflake build.
+
+---
+
 ## Design decisions
 
 | Decision | Reasoning |
