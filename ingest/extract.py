@@ -64,6 +64,8 @@ def fetch_and_save_trade_data():
             else:
                 print('Response is not JSON!')
                 print(f"Content-Type: {response.headers.get('Content-Type')}")
+                print(f"Status: {response.status_code}")
+                print(f"Body (first 300 chars): {response.text[:300]}")
                 sys.exit('Closing script')
 
         except json.JSONDecodeError:
